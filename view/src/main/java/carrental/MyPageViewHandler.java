@@ -47,7 +47,7 @@ public class MyPageViewHandler {
                 List<MyPage> myPageList = myPageRepository.findByResrvNo(paid.getResrvNo());
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    myPage.setResrvNo(paid.getResrvNo());
+                    myPage.setRentalAmt(paid.getPaymtAmt());
                     myPage.setProcStatus(paid.getProcStatus());
                     // view 레파지 토리에 save
                     myPageRepository.save(myPage);
@@ -65,7 +65,6 @@ public class MyPageViewHandler {
                 List<MyPage> myPageList = myPageRepository.findByResrvNo(carRented.getResrvNo());
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    myPage.setResrvNo(carRented.getResrvNo());
                     myPage.setProcStatus(carRented.getProcStatus());
                     // view 레파지 토리에 save
                     myPageRepository.save(myPage);
@@ -83,7 +82,6 @@ public class MyPageViewHandler {
                 List<MyPage> myPageList = myPageRepository.findByResrvNo(carReservationCanceled.getResrvNo());
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    myPage.setResrvNo(carReservationCanceled.getResrvNo());
                     myPage.setProcStatus(carReservationCanceled.getProcStatus());
                     // view 레파지 토리에 save
                     myPageRepository.save(myPage);
@@ -101,7 +99,7 @@ public class MyPageViewHandler {
                 List<MyPage> myPageList = myPageRepository.findByResrvNo(paymentCanceled.getResrvNo());
                 for(MyPage myPage : myPageList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    myPage.setResrvNo(paymentCanceled.getResrvNo());
+                    myPage.setRentalAmt(paymentCanceled.getPaymtAmt());
                     myPage.setProcStatus(paymentCanceled.getProcStatus());
                     // view 레파지 토리에 save
                     myPageRepository.save(myPage);
