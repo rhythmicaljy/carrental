@@ -37,7 +37,8 @@ public class CarReservation {
         payment.setResrvNo(carReserved.getResrvNo());
         payment.setPaymtNo(carReserved.getResrvNo());
         payment.setPaymtDt(carReserved.getResrvDt());
-        payment.setPaymtAmt(carReserved.getRentalAmt());
+        payment.setRentalAmt(carReserved.getRentalAmt());
+        //payment.setPaymtAmt(carReserved.getRentalAmt());
         payment.setProcStatus("RESERVED");
         payment.setCarNo(carReserved.getCarNo());
         payment.setRentalDt(carReserved.getRentalDt());

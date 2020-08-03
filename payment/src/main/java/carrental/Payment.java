@@ -23,8 +23,8 @@ public class Payment {
     private String returnDt;
     private Long rentalAmt;
 
-    @PostPersist
-    public void onPostPersist(){
+    @PrePersist
+    public void onPrePersist(){
         Paid paid = new Paid();
         BeanUtils.copyProperties(this, paid);
         paid.publishAfterCommit();

@@ -6,6 +6,7 @@ public class Payment {
     private String paymtNo;
     private String paymtDt;
     private String paymtCncleDt;
+    private Long rentalAmt;
     private Long paymtAmt;
     private String resrvNo;
     private String procStatus;
@@ -33,6 +34,8 @@ public class Payment {
     public void setPayerCustNoNa(String payerCustNoNa) {
         this.payerCustNoNa = payerCustNoNa;
     }
+
+
     public String getPaymtDt() {
         return paymtDt;
     }
@@ -45,6 +48,16 @@ public class Payment {
     public void setPaymtCncleDt(String paymtCncleDt) {
         this.paymtCncleDt = paymtCncleDt;
     }
+
+
+    public Long getRentalAmtAmt() {
+        return paymtAmt;
+    }
+    public void setRentalAmt(Long paymtAmt) {
+        this.paymtAmt = paymtAmt;
+    }
+
+
     public Long getPaymtAmt() {
         return paymtAmt;
     }

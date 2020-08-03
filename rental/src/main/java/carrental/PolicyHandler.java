@@ -31,7 +31,7 @@ public class PolicyHandler{
             carRental.setCarNo(paid.getCarNo());
             carRental.setRentalDt(paid.getRentalDt());
             carRental.setReturnDt(paid.getRentalDt());
-            carRental.setProcStatus("PAID");
+            carRental.setProcStatus(paid.getProcStatus());
 
             carRentalRepository.save(carRental);
 
