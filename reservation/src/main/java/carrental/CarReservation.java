@@ -33,6 +33,18 @@ public class CarReservation {
 
         carrental.external.Payment payment = new carrental.external.Payment();
         // mappings goes here
+        payment.setId(carReserved.getId());
+        payment.setResrvNo(carReserved.getResrvNo());
+        payment.setPaymtNo(carReserved.getResrvNo());
+        payment.setPaymtDt(carReserved.getResrvDt());
+        payment.setPaymtAmt(carReserved.getRentalAmt());
+        payment.setProcStatus("RESERVED");
+        payment.setCarNo(carReserved.getCarNo());
+        payment.setRentalDt(carReserved.getRentalDt());
+        payment.setReturnDt(carReserved.getReturnDt());
+
+        System.out.println("##### listener carReservationCanceled.getResrvNo [RESERVED] : " + carReserved.getResrvNo());
+
         ReservationApplication.applicationContext.getBean(carrental.external.PaymentService.class)
             .payment(payment);
 
@@ -50,6 +62,15 @@ public class CarReservation {
 
         carrental.external.Payment payment = new carrental.external.Payment();
         // mappings goes here
+        payment.setResrvNo(carReservationCanceled.getResrvNo());
+        payment.setPaymtNo(carReservationCanceled.getResrvNo());
+        payment.setPaymtCncleDt(carReservationCanceled.getResrvCncleDt());
+        payment.setPaymtAmt(carReservationCanceled.getRentalAmt());
+        payment.setProcStatus("RESERVATION_CANCELLED");
+        payment.setCarNo(carReservationCanceled.getCarNo());
+
+        System.out.println("##### listener carReservationCanceled.getResrvNo [RESERVATION_CANCELLED] : " + carReservationCanceled.getResrvNo());
+
         ReservationApplication.applicationContext.getBean(carrental.external.PaymentService.class)
             .paymentCancellation(payment);
 

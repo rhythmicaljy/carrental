@@ -4,12 +4,16 @@ public class Payment {
 
     private Long id;
     private String paymtNo;
-    private String payerCustNoNa;
     private String paymtDt;
     private String paymtCncleDt;
     private Long paymtAmt;
     private String resrvNo;
     private String procStatus;
+    private String payerCustNoNa;
+    private String carNo;
+    private String rentalDt;
+    private String returnDt;
+
 
     public Long getId() {
         return id;
@@ -59,5 +63,22 @@ public class Payment {
     public void setProcStatus(String procStatus) {
         this.procStatus = procStatus;
     }
-
+    public String getCarNo() {
+        return carNo;
+    }
+    public void setCarNo(String carNo) {
+        this.carNo = carNo;
+    }
+    public String getRentalDt() {
+        return rentalDt;
+    }
+    public void setRentalDt(String rentalDt) {
+        this.rentalDt = rentalDt;
+    }
+    public String getReturnDt() {
+        return returnDt;
+    }
+    public void setReturnDt(String returnDt) {
+        this.returnDt = returnDt;
+    }
 }

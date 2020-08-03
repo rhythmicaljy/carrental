@@ -8,6 +8,8 @@ public class CarReservationCanceled extends AbstractEvent {
     private String procStatus;
     private String bookerCustNoNA;
     private String bookerMpnoNA;
+    private String carNo;
+    private Long rentalAmt;
 
     public Long getId() {
         return id;
@@ -51,4 +53,18 @@ public class CarReservationCanceled extends AbstractEvent {
     public void setBookerMpnoNa(String bookerMpnoNA) {
         this.bookerMpnoNA = bookerMpnoNA;
     }
+
+    public String getCarNo() {
+        return carNo;
+    }
+    public void setCarNo(String carNo) {
+        this.carNo = carNo;
+    }
+    public Long getRentalAmt() {
+        return rentalAmt;
+    }
+    public void setRentalAmt(Long rentalAmt) {
+        this.rentalAmt = rentalAmt;
+    }
+
 }
