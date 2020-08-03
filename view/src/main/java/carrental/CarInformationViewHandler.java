@@ -29,6 +29,7 @@ public class CarInformationViewHandler {
                 carInformation.setRentalAmt(carRegistered.getRentalAmt());
                 // view 레파지 토리에 save
                 carInformationRepository.save(carInformation);
+                System.out.println("##### listener whenCarRegistered_then_CREATE_1 [VIEW] : " + carInformation.getCarNo());
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -44,7 +45,11 @@ public class CarInformationViewHandler {
                 List<CarInformation> carInformationList = carInformationRepository.findByCarNo(carUpdated.getCarNo());
                 for(CarInformation carInformation : carInformationList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
+                    carInformation.setCarNo(carUpdated.getCarNo());
                     carInformation.setProcStatus(carUpdated.getProcStatus());
+                    carInformation.setRentalAmt(carUpdated.getRentalAmt());
+
+                    System.out.println("##### listener whenCarUpdated_then_UPDATE_1 [VIEW] : " + carInformation.getCarNo());
                     // view 레파지 토리에 save
                     carInformationRepository.save(carInformation);
                 }
@@ -71,13 +76,4 @@ public class CarInformationViewHandler {
         }
     }
 
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whenCarUpdated_then_DELETE_1(@Payload CarUpdated carUpdated) {
-        try {
-            if (carUpdated.isMe()) {
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 }
