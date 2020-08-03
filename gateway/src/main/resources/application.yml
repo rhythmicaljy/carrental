@@ -23,7 +23,7 @@ spring:
         - id: view
           uri: http://localhost:8084
           predicates:
-            - Path= /myPages/**/carInformations/**
+            - Path= /myPages/**,/carInformations/**
         - id: management
           uri: http://localhost:8085
           predicates:

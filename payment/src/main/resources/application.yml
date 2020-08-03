@@ -25,10 +25,10 @@ spring:
       bindings:
         event-in:
           group: payment
-          destination: carrental2
+          destination: carrental
           contentType: application/json
         event-out:
-          destination: carrental2
+          destination: carrental
           contentType: application/json
 
 logging:
@@ -57,8 +57,8 @@ spring:
       bindings:
         event-in:
           group: payment
-          destination: carrental2
+          destination: carrental
           contentType: application/json
         event-out:
-          destination: carrental2
+          destination: carrental
           contentType: application/json
