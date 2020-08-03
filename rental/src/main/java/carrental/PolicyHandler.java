@@ -44,6 +44,7 @@ public class PolicyHandler{
         if(paymentCanceled.isMe() && "PAYMENT_CANCELED".equals(paymentCanceled.getProcStatus()) ){
 
             CarRental carRental = new CarRental();
+            carRental.setId(paymentCanceled.getId());
             carRental.setPaymtNo(paymentCanceled.getPaymtNo());
             carRental.setRentalCncleDt(paymentCanceled.getPaymtCncleDt());
             carRental.setResrvNo(paymentCanceled.getResrvNo());

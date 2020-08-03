@@ -19,7 +19,8 @@ spring:
         - id: payment
           uri: http://localhost:8083
           predicates:
-            - Path=/payments/**,/paymentCancellations/**
+            #- Path=/payments/**,/paymentCancellations/**
+            - Path=/payments/**
         - id: view
           uri: http://localhost:8084
           predicates:
@@ -58,7 +59,8 @@ spring:
         - id: payment
           uri: http://payment:8080
           predicates:
-            - Path=/payments/**,/paymentCancellations/**
+            #- Path=/payments/**,/paymentCancellations/**
+            - Path=/payments/**
         - id: view
           uri: http://view:8080
           predicates:
