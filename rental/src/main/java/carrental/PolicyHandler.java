@@ -22,7 +22,7 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverPaid_CarRental(@Payload Paid paid){
 
-        if(paid.isMe()){
+        if(paid.isMe() && "PAID".equals(paid.getProcStatus())){
 
             CarRental carRental = new CarRental();
             carRental.setId(paid.getId());
@@ -41,7 +41,7 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverPaymentCanceled_CarRentalCancellation(@Payload PaymentCanceled paymentCanceled){
 
-        if(paymentCanceled.isMe()){
+        if(paymentCanceled.isMe() && "PAYMENT_CANCELED".equals(paymentCanceled.getProcStatus()) ){
 
             CarRental carRental = new CarRental();
             carRental.setPaymtNo(paymentCanceled.getPaymtNo());

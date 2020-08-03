@@ -30,6 +30,14 @@ public class Payment {
         paid.publishAfterCommit();
 
 
+        /*
+        // 부하 발생
+        try {
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        */
     }
 
     @PostUpdate
