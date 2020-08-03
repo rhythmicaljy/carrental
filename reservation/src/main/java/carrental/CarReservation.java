@@ -38,11 +38,15 @@ public class CarReservation {
         payment.setPaymtNo(carReserved.getResrvNo());
         payment.setPaymtDt(carReserved.getResrvDt());
         payment.setRentalAmt(carReserved.getRentalAmt());
-        //payment.setPaymtAmt(carReserved.getRentalAmt());
+        payment.setPaymtAmt(carReserved.getRentalAmt());
         payment.setProcStatus("RESERVED");
         payment.setCarNo(carReserved.getCarNo());
         payment.setRentalDt(carReserved.getRentalDt());
         payment.setReturnDt(carReserved.getReturnDt());
+
+
+
+
 
         System.out.println("##### listener carReservationCanceled.getResrvNo [RESERVED] : " + carReserved.getResrvNo());
 
