@@ -51,10 +51,10 @@ public class Payment {
 
 
     public Long getRentalAmtAmt() {
-        return paymtAmt;
+        return rentalAmt;
     }
-    public void setRentalAmt(Long paymtAmt) {
-        this.paymtAmt = paymtAmt;
+    public void setRentalAmt(Long rentalAmt) {
+        this.rentalAmt = rentalAmt;
     }
 
 
