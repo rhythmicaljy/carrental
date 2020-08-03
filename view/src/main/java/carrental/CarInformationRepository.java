@@ -8,6 +8,5 @@ import java.util.List;
 public interface CarInformationRepository extends CrudRepository<CarInformation, Long> {
 
     List<CarInformation> findByCarNo(String carNo);
-    List<CarInformation> findByCarNo(String carNo);
 
 }

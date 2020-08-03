@@ -8,9 +8,5 @@ import java.util.List;
 public interface MyPageRepository extends CrudRepository<MyPage, Long> {
 
     List<MyPage> findByResrvNo(String resrvNo);
-    List<MyPage> findByResrvNo(String resrvNo);
-    List<MyPage> findByResrvNo(String resrvNo);
-    List<MyPage> findByResrvNo(String resrvNo);
-    List<MyPage> findByResrvNo(String resrvNo);
 
 }
