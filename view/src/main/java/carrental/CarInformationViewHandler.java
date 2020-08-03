@@ -24,18 +24,19 @@ public class CarInformationViewHandler {
                 // view 객체 생성
                 CarInformation carInformation = new CarInformation();
                 // view 객체에 이벤트의 Value 를 set 함
-                carInformation.setCarNo(carRegistered.getCarNo());
-                carInformation.setProcStatus(carRegistered.getProcStatus());
-                carInformation.setRentalAmt(carRegistered.getRentalAmt());
-                // view 레파지 토리에 save
-                carInformationRepository.save(carInformation);
-                System.out.println("##### listener whenCarRegistered_then_CREATE_1 [VIEW] : " + carInformation.getCarNo());
+                if (!(carRegistered.getCarNo()==null)) {
+                    carInformation.setCarNo(carRegistered.getCarNo());
+                    carInformation.setProcStatus(carRegistered.getProcStatus());
+                    carInformation.setRentalAmt(carRegistered.getRentalAmt());
+                    // view 레파지 토리에 save
+                    carInformationRepository.save(carInformation);
+                    System.out.println("##### listener whenCarRegistered_then_CREATE_1 [VIEW] : " + carInformation.getCarNo());
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-
 
     @StreamListener(KafkaProcessor.INPUT)
     public void whenCarUpdated_then_UPDATE_1(@Payload CarUpdated carUpdated) {
@@ -45,7 +46,6 @@ public class CarInformationViewHandler {
                 List<CarInformation> carInformationList = carInformationRepository.findByCarNo(carUpdated.getCarNo());
                 for(CarInformation carInformation : carInformationList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
-                    carInformation.setCarNo(carUpdated.getCarNo());
                     carInformation.setProcStatus(carUpdated.getProcStatus());
                     carInformation.setRentalAmt(carUpdated.getRentalAmt());
 
@@ -67,6 +67,7 @@ public class CarInformationViewHandler {
                 for(CarInformation carInformation : carInformationList){
                     // view 객체에 이벤트의 eventDirectValue 를 set 함
                     carInformation.setProcStatus(carDeleted.getProcStatus());
+                    System.out.println("##### listener whenCarDeleted_then_UPDATE_2 [VIEW] : " + carInformation.getCarNo());
                     // view 레파지 토리에 save
                     carInformationRepository.save(carInformation);
                 }
