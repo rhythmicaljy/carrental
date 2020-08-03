@@ -15,6 +15,6 @@ public interface PaymentService {
     @RequestMapping(method= RequestMethod.POST, path="/payments")
     public void payment(@RequestBody Payment payment);
 
-    @RequestMapping(method= RequestMethod.PUT, path="/paymentCancellations")
+    @RequestMapping(method= RequestMethod.PUT, path="/payments")
     public void paymentCancellation(@RequestBody Payment payment);
 }

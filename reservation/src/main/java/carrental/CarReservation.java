@@ -67,6 +67,7 @@ public class CarReservation {
 
         carrental.external.Payment payment = new carrental.external.Payment();
         // mappings goes here
+        payment.setId(carReservationCanceled.getId());
         payment.setResrvNo(carReservationCanceled.getResrvNo());
         payment.setPaymtNo(carReservationCanceled.getResrvNo());
         payment.setPaymtCncleDt(carReservationCanceled.getResrvCncleDt());
