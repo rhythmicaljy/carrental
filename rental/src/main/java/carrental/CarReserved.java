@@ -55,16 +55,13 @@ public class CarReserved extends AbstractEvent {
     public void setReturnDt(String returnDt) {
         this.returnDt = returnDt;
     }
-
-
     public Long getRentalAmt() {
         return rentalAmt;
     }
+
     public void setRentalAmt(Long rentalAmt) {
         this.rentalAmt = rentalAmt;
     }
-
-
     public String getProcStatus() {
         return procStatus;
     }

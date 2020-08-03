@@ -56,4 +56,23 @@ public class PolicyHandler{
         }
     }
 
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverCarReserved_CarRental(@Payload CarReserved carReserved){
+
+        if(carReserved.isMe()){
+            CarRental carRental = new CarRental();
+            carRental.setId(carReserved.getId());
+            carRental.setResrvNo(carReserved.getResrvNo());
+
+            carRental.setCarNo(carReserved.getCarNo());
+            carRental.setRentalDt(carReserved.getRentalDt());
+            carRental.setReturnDt(carReserved.getRentalDt());
+            carRental.setProcStatus(carReserved.getProcStatus());
+
+            carRentalRepository.save(carRental);
+
+            System.out.println("##### listener CarRental [Reserved] : " + carReserved.toJson());
+        }
+    }
+
 }

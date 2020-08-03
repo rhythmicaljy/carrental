@@ -25,9 +25,9 @@ public class Payment {
 
     @PrePersist
     public void onPrePersist(){
-        Paid paid = new Paid();
+/*        Paid paid = new Paid();
         BeanUtils.copyProperties(this, paid);
-        paid.publishAfterCommit();
+        paid.publishAfterCommit();*/
 
 
         /*
@@ -42,6 +42,12 @@ public class Payment {
 
     @PostUpdate
     public void onPostUpdate(){
+
+        Paid paid = new Paid();
+        BeanUtils.copyProperties(this, paid);
+        paid.publishAfterCommit();
+
+
         PaymentCanceled paymentCanceled = new PaymentCanceled();
         BeanUtils.copyProperties(this, paymentCanceled);
         paymentCanceled.publishAfterCommit();
