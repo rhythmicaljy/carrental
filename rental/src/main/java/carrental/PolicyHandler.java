@@ -8,6 +8,8 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PolicyHandler{
 
@@ -43,12 +45,16 @@ public class PolicyHandler{
 
         if(paymentCanceled.isMe() && "PAYMENT_CANCELED".equals(paymentCanceled.getProcStatus()) ){
 
+            Optional<CarRental> carRentalO = carRentalRepository.findById(paymentCanceled.getId());
             CarRental carRental = new CarRental();
             carRental.setId(paymentCanceled.getId());
             carRental.setPaymtNo(paymentCanceled.getPaymtNo());
-            carRental.setRentalCncleDt(paymentCanceled.getPaymtCncleDt());
             carRental.setResrvNo(paymentCanceled.getResrvNo());
             carRental.setCarNo(paymentCanceled.getCarNo());
+            if (carRentalO.isPresent()){
+                carRental = carRentalO.get();
+            }
+            carRental.setRentalCncleDt(paymentCanceled.getPaymtCncleDt());
             carRental.setProcStatus("PAYMENT_CANCELED");
 
             carRentalRepository.save(carRental);

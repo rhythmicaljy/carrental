@@ -53,6 +53,7 @@ public class CarInformationViewHandler {
                     carInformation.setProcStatus(carUpdated.getProcStatus());
                     carInformation.setRentalAmt(carUpdated.getRentalAmt());
 
+                    System.out.println("##### listener setRentalAmt : " + carUpdated.getRentalAmt());
                     System.out.println("##### listener whenCarUpdated_then_UPDATE_1 [VIEW] : " + carInformation.getCarNo());
                     // view 레파지 토리에 save
                     carInformationRepository.save(carInformation);
