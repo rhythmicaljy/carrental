@@ -493,7 +493,7 @@ siege -r 2000 -c 200 -v http://gateway:8080/carManagements
 시스템을 안정적으로 운영할 수 있게 자동화된 확장 기능을 적용
 
 
-- 결제서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 20프로를 넘어서면 replica 를 10개까지 늘려준다:
+- 테스트를 위해 관리서비스에 대한 replica 를 동적으로 늘려주도록 HPA 를 설정한다. 설정은 CPU 사용량이 20프로를 넘어서면 replica 를 10개까지 늘려준다:
 ```
 kubectl autoscale deploy management --min=1 --max=10 --cpu-percent=20
 kubectl get po -l run=management -w
