@@ -60,7 +60,7 @@ public class PolicyHandler{
     @StreamListener(KafkaProcessor.INPUT)
     public void wheneverCarReserved_CarRental(@Payload CarReserved carReserved){
 
-        if(carReserved.isMe()){
+        if(carReserved.isMe() && "RESERVED".equals(carReserved.getProcStatus())  ){
             CarRental carRental = new CarRental();
             carRental.setId(carReserved.getId());
             carRental.setResrvNo(carReserved.getResrvNo());
@@ -73,6 +73,25 @@ public class PolicyHandler{
             carRentalRepository.save(carRental);
 
             System.out.println("##### listener CarRental [Reserved] : " + carReserved.toJson());
+        }
+    }
+
+    @StreamListener(KafkaProcessor.INPUT)
+    public void wheneverCarReservationCanceled_CarRentalCancellation(@Payload CarReservationCanceled carReservationCanceled){
+
+        if(carReservationCanceled.isMe()   && "RESERVATION_CANCELED".equals(carReservationCanceled.getProcStatus())    ){
+            CarRental carRental = new CarRental();
+            carRental.setId(carReservationCanceled.getId());
+            carRental.setResrvNo(carReservationCanceled.getResrvNo());
+
+ /*           carRental.setCarNo(carReservationCanceled.getCarNo());
+            carRental.setRentalDt(carReservationCanceled.getRentalDt());
+            carRental.setReturnDt(carReservationCanceled.getRentalDt());*/
+            carRental.setProcStatus(carReservationCanceled.getProcStatus());
+
+            carRentalRepository.save(carRental);
+
+            System.out.println("##### listener CarRental [Reservation Canceled] : " + carReservationCanceled.toJson());
         }
     }
 
