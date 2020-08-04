@@ -1,8 +1,8 @@
 package carrental;
 
-import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
-import java.util.List;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="Payment_table")
@@ -43,14 +43,16 @@ public class Payment {
     @PostUpdate
     public void onPostUpdate(){
 
-        Paid paid = new Paid();
-        BeanUtils.copyProperties(this, paid);
-        paid.publishAfterCommit();
+        if ("PAID".equals(this.getProcStatus())) {
+            Paid paid = new Paid();
+            BeanUtils.copyProperties(this, paid);
+            paid.publishAfterCommit();
+        } else {
+            PaymentCanceled paymentCanceled = new PaymentCanceled();
+            BeanUtils.copyProperties(this, paymentCanceled);
+            paymentCanceled.publishAfterCommit();
+        }
 
-
-        PaymentCanceled paymentCanceled = new PaymentCanceled();
-        BeanUtils.copyProperties(this, paymentCanceled);
-        paymentCanceled.publishAfterCommit();
 
 
     }
