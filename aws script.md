@@ -108,3 +108,85 @@ NAME          TYPE           CLUSTER-IP      EXTERNAL-IP                        
 gateway       LoadBalancer   10.100.51.99    ****-1329116461.ap-northeast-2.elb.amazonaws.com   8080:31699/TCP   41m   
 
 http://****-1329116461.ap-northeast-2.elb.amazonaws.com:8080/서비스 로 접속한다   
+
+
+
+
+
+
+# Liveness
+/tmp/healthy 파일의 존재를 확인하는 liveness를 적용하였다.   
+3초동안 파드가 뜨기를 기다렸다가 파드가 뜨지 않았을 경우 최대 5번까지 재시도 한다. 
+이때, /tmp/healthy를 지워버리므로 liveness는 pod상태가 정상이 아니라고 판단한다.   
+5번 재시도 후에도 파드가 뜨지 않았을 경우 CrashLoopBackOff 상태가 된다.   
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    app: payment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - name: payment
+          image: 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-payment:v1
+          args:
+          - /bin/sh
+          - -c
+          - touch /tmp/healthy; sleep 10; rm -rf /tmp/healthy; sleep 600;
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:                 #적용 부분
+            exec:
+              command:
+              - cat
+              - /tmp/healthy
+            initialDelaySeconds: 3
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+```
+```
+$ k get pod -w
+NAME                           READY   STATUS    RESTARTS   AGE
+gateway-849986759f-9w56j       1/1     Running   0          101m
+management-57bdb8b8c-gvrkq     1/1     Running   0          74m
+payment-5664c755cc-4tgn7       0/1     Running   1          48s
+rental-c697b7d78-xl8kf         1/1     Running   0          61m
+reservation-559fd5d9f8-4ldrg   1/1     Running   0          59m
+view-6484f74b85-6ql85          1/1     Running   0          57m
+payment-5664c755cc-4tgn7       1/1     Running   1          49s
+payment-5664c755cc-4tgn7       0/1     Running   2          53s
+payment-5664c755cc-4tgn7       1/1     Running   2          74s
+payment-5664c755cc-4tgn7       0/1     Running   3          78s
+payment-5664c755cc-4tgn7       1/1     Running   3          99s
+payment-5664c755cc-4tgn7       0/1     Running   4          103s
+payment-5664c755cc-4tgn7       1/1     Running   4          2m4s
+payment-5664c755cc-4tgn7       0/1     CrashLoopBackOff   4          2m8s
+
+$ k get pod
+NAME                           READY   STATUS             RESTARTS   AGE
+gateway-849986759f-9w56j       1/1     Running            0          103m
+management-57bdb8b8c-gvrkq     1/1     Running            0          76m
+payment-5664c755cc-4tgn7       0/1     CrashLoopBackOff   4          2m27s
+rental-c697b7d78-xl8kf         1/1     Running            0          63m
+reservation-559fd5d9f8-4ldrg   1/1     Running            0          60m
+view-6484f74b85-6ql85          1/1     Running            0          58m
+```
