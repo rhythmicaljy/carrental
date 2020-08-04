@@ -15,6 +15,7 @@ public interface PaymentService {
     @RequestMapping(method= RequestMethod.POST, path="/payments")
     public void payment(@RequestBody Payment payment);
 
-    @RequestMapping(method= RequestMethod.PUT, path="/payments")
+    //@RequestMapping(method= RequestMethod.PUT, path="/payments") => 404 status Error : JPA Transaction Error
+    @RequestMapping(method= RequestMethod.POST, path="/payments")
     public void paymentCancellation(@RequestBody Payment payment);
 }
