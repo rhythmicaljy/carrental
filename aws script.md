@@ -226,7 +226,7 @@ http http://view:8080/carInformations
 ```
   
 
-## 서킷 브레이커
+# 서킷 브레이커
 ```
 $ kubectl scale deploy management --replicas=2
 
@@ -410,4 +410,10 @@ HTTP/1.1 201   0.08 secs:     332 bytes ==> POST http://gateway:8080/carManageme
 HTTP/1.1 201   0.07 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
 HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
 HTTP/1.1 201   0.09 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+```
+
+
+# 리트라이
+### 리트라이 적용
+```
 ```
