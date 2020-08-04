@@ -25,7 +25,11 @@ public class CarInformationViewHandler {
                 CarInformation carInformation = new CarInformation();
                 // view 객체에 이벤트의 Value 를 set 함
                 if (!(carRegistered.getCarNo()==null)) {
+                    List<CarInformation> carlist = carInformationRepository.findByCarNo(carRegistered.getCarNo());
                     carInformation.setCarNo(carRegistered.getCarNo());
+                    if (carlist.size()>0) {
+                        carInformation = carlist.get(0);
+                    }
                     carInformation.setProcStatus(carRegistered.getProcStatus());
                     carInformation.setRentalAmt(carRegistered.getRentalAmt());
                     // view 레파지 토리에 save
