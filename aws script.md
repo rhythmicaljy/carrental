@@ -77,8 +77,8 @@ docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-pay
 
 
 ## gateway deploy
-kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/[ecr경로]-gateway:v1
-kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-gateway:v1    
+kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/[ecr경로]-gateway:v1   
+kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-gateway:v1     
 kubectl expose deployment.apps/gateway  --type=LoadBalancer --port=8080
 
 
