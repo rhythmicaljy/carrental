@@ -226,7 +226,7 @@ http http://view:8080/carInformations
 ```
   
 
-## 서킷 브레이터
+## 서킷 브레이커
 ```
 $ kubectl scale deploy management --replicas=2
 
