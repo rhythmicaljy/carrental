@@ -216,3 +216,198 @@ index.html           100% |*****************************************************
 Connecting to view.default:8080 (10.100.71.102:8080)
 myPages              100% |*********************************************************************************************************************************|   300  0:00:00 ETA
 ```
+httpie 설치 및 테스트
+```
+kubectl exec -it httpie bin/bash
+http http://gateway:8080/carManagements carNo=test rentalAmt=10000 procStatus=WAITING carRegDt=20200701
+http http://gateway:8080/carManagements carNo=car01 rentalAmt=10000 procStatus=WAITING carRegDt=20200701
+http http://gateway:8080/carManagements carNo=car02 rentalAmt=20000 procStatus=WAITING carRegDt=20200702
+http http://view:8080/carInformations
+```
+  
+
+## 서킷 브레이터
+```
+$ kubectl scale deploy management --replicas=2
+
+$ kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: management
+spec:
+  host: management
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 1
+      http:
+        http1MaxPendingRequests: 1
+        maxRequestsPerConnection: 1
+    outlierDetection:
+      consecutiveErrors: 5
+      interval: 10s
+      baseEjectionTime: 30s
+      maxEjectionPercent: 100
+EOF
+```
+#### 적용 시 
+```
+siege -c20 -t30S  -v --content-type "application/json" 'http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}'
+** SIEGE 3.0.8
+** Preparing 20 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.04 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.04 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.10 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.04 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.04 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.11 secs:      95 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.04 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.06 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.06 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.09 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.04 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.15 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.15 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.12 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.18 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.03 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.10 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.10 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.12 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.11 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.03 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.00 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.00 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.04 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.11 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.13 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.11 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.12 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.14 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.14 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.04 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.03 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.01 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.07 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.15 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.02 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.03 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.05 secs:      81 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.28 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 503   0.08 secs:      95 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.06 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+```
+
+#### 서킷 브레이커 삭제 
+```
+$ kubectl delete dr --all
+siege -c20 -t30S  -v --content-type "application/json" 'http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}'
+** SIEGE 3.0.8
+** Preparing 20 concurrent users for battle.
+The server is now under siege...
+HTTP/1.1 201   0.05 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.08 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.08 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.04 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.13 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.19 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.13 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.27 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.20 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.27 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.29 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.20 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.06 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.06 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.08 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.01 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.05 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.03 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.00 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.08 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.07 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.02 secs:     334 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+HTTP/1.1 201   0.09 secs:     332 bytes ==> POST http://gateway:8080/carManagements POST {"carNo":"test", "rentalAmt":"10000", "procStatus":"AITING", "carRegDt":"20200701"}
+```
