@@ -2,6 +2,8 @@
 각 마이크로 서비스 별로 GIT REPOSITORY를 생성하여 코드를 업로드 한다.
 예시) https://github.com/l2skcc
 
+
+
 # aws set up
 ## aws iam
 access key를 전달 받는다   
@@ -11,7 +13,8 @@ aws configure
 - 전달받은 access key입력
 - 리전 : ap-northeast-2
 
-## aws eks 
+
+# aws eks 
 #### 클러스터 생성   
 eksctl create cluster --name [클러스터명] --version 1.15 --nodegroup-name standard-workers --node-type t3.medium --nodes 3 --nodes-min 1 --nodes-max 3
 #### 클러스터 접속 정보 받아오기 
@@ -19,7 +22,7 @@ aws eks --region ap-northeast-2 update-kubeconfig --name [클러스터명]
 #### 노드 리스트 확인   
 kubectl get node
 
-## aws ecr   
+# aws ecr   
 #### aws repository 로그인   
 aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com   
 
@@ -35,11 +38,14 @@ aws ecr create-repository --repository-name ecr-skcc-team2-veiw --image-scanning
 aws ecr create-repository --repository-name ecr-skcc-team2-payment --image-scanning-configuration scanOnPush=true --region ap-northeast-2   
 
 
+
+# UBUNTU
 ## git clone to ubuntu
 #### 위에서 생성한 깃 레파지토리를 우분투의 각 폴더에 다운로드   
 mkdir [폴더명]   
 git clone https://github.com/[경로]   
 cd [폴더명]/[경로]   
+
 
 ## mvn package
 #### 각 경로에서 메이븐 빌드     
@@ -69,9 +75,11 @@ docker build -t 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2
 docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-payment:v1   
 
 
+
 ## gateway deploy
 kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/[ecr경로]-gateway:v1   
 kubectl expose deployment.apps/gateway  --type=LoadBalancer --port=808
+
 
 
 ## 나머지 서비스deploy
@@ -90,6 +98,8 @@ helm repo update
 helm install --name my-kafka --namespace kafka incubator/kafka   
 
 watch kubectl get all -n kafka    
+
+
 
 
 ## 확인하기
