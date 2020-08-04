@@ -77,7 +77,8 @@ docker push 496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-pay
 
 
 ## gateway deploy
-kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/[ecr경로]-gateway:v1   
+kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/[ecr경로]-gateway:v1
+kubectl create deploy gateway --image=496278789073.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-skcc-team2-gateway:v1    
 kubectl expose deployment.apps/gateway  --type=LoadBalancer --port=8080
 
 
@@ -189,4 +190,29 @@ payment-5664c755cc-4tgn7       0/1     CrashLoopBackOff   4          2m27s
 rental-c697b7d78-xl8kf         1/1     Running            0          63m
 reservation-559fd5d9f8-4ldrg   1/1     Running            0          60m
 view-6484f74b85-6ql85          1/1     Running            0          58m
+```
+
+
+# ISTIO
+istio 설치 후 deploy재기동 
+```
+cd istio
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.4.5 sh -
+cd istio-1.4.5
+export PATH=$PWD/bin:$PATH
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+kubectl apply -f install/kubernetes/istio-demo.yaml
+kubectl get pod -n istio-system
+kubectl label ns default istio-injection=enabled
+```
+테스트 결과 
+```
+$ k exec -it management-57bdb8b8c-2z7lr -- /bin/sh
+Defaulting container name to management.
+/ # wget http://management.default:8080
+Connecting to management.default:8080 (10.100.60.100:8080)
+index.html           100% |*********************************************************************************************************************************|   240  0:00:00 ETA
+/ # wget http://view.default:8080/myPages
+Connecting to view.default:8080 (10.100.71.102:8080)
+myPages              100% |*********************************************************************************************************************************|   300  0:00:00 ETA
 ```
