@@ -39,6 +39,27 @@ server:
   port: 8082
 ---
 
+######################## Circuit Breaker --> feign, hystrix
+feign:
+  hystrix:
+    enabled: true
+
+# To set thread isolation to SEMAPHORE
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          strategy: SEMAPHORE
+
+hystrix:
+  command:
+    # 전역설정
+    default:
+      execution.isolation.thread.timeoutInMilliseconds: 610
+######################### Circuit Breaker --> feign, hystrix
+
+
 spring:
   profiles: docker
   cloud:

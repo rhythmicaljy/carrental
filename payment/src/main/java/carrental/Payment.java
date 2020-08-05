@@ -52,6 +52,14 @@ public class Payment {
         BeanUtils.copyProperties(this, paymentCanceled);
         paymentCanceled.publishAfterCommit();
 
+        System.out.println("#################### Enter Payment : ");
+        try {
+            Thread.currentThread().sleep((long) (400 + Math.random() * 220));
+            System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ SLEEP");
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 
